@@ -479,5 +479,76 @@ def get_chunks(seq, tags):
 
     return chunks
 
+def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
+    '''
+    transit CoNLLdata into classifier style, (words,tags,masks)
+    :param datasets:
+    :return:
+    '''
+    words, tags, masks = [], [], []
+    for raw_words, raw_tags in dataset:
+        chunks = get_chunks_from_tags(raw_tags)
+        for ne_type, ne_start, ne_end in chunks:
+            tags.append(processing_tag(ne_type))
+
+            for i, word in enumerate(raw_words):
+
+                if i<ne_start or i>=ne_end:
+                    words.append(processing_word(word))
+                    masks.append(False)
+                else:
+                    if i==ne_start:
+                        entity = raw_words[i]
+                    else:
+                        entity = entity + '$@&' + raw_words[i]
+
+                    if i==ne_end-1:
+                        words.append(processing_word(entity))
+            yield words, tags, masks
+            words, tags, masks = [], [], []
+
+
+
+
+
+
+def get_chunks_from_tags(tags):
+    '''
+
+    :param tags: [B-LOC,I-LOC,O,B-PER]
+    :return: [("LOC",0,2),("PER",3,4)]
+    '''
+    chunks = []
+    chunk_type, chunk_start = None, None
+    for i, tok in enumerate(tags):
+        # End of a chunk 1
+        if tok == 'O' and chunk_type is not None:
+            # Add a chunk.
+            chunk = (chunk_type, chunk_start, i)
+            chunks.append(chunk)
+            chunk_type, chunk_start = None, None
+
+        # End of a chunk + start of a chunk!
+        elif tok != 'O':
+            tok_chunk_class, tok_chunk_type = tok.split('-')
+            if chunk_type is None:
+                chunk_type, chunk_start = tok_chunk_type, i
+            elif tok_chunk_type != chunk_type or tok_chunk_class == "B":
+                chunk = (chunk_type, chunk_start, i)
+                chunks.append(chunk)
+                chunk_type, chunk_start = tok_chunk_type, i
+        else:
+            pass
+
+    # end condition
+    if chunk_type is not None:
+        chunk = (chunk_type, chunk_start, len(seq))
+        chunks.append(chunk)
+
+    return chunks
+
+
+
+
 
 
