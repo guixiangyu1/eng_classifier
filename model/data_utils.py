@@ -486,6 +486,7 @@ def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
     :return:
     '''
     words, tags, masks = [], [], []
+    data = []
     for raw_words, raw_tags in dataset:
         chunks = get_chunks_from_tags(raw_tags)
         for ne_type, ne_start, ne_end in chunks:
@@ -505,8 +506,9 @@ def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
                     if i==ne_end-1:
                         words.append(processing_word(entity))
                         masks.append(True)
-            yield words, tags, masks
+            data.append((words, tags, masks))
             words, tags, masks = [], [], []
+    return data
 
 
 
