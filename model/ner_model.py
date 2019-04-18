@@ -38,8 +38,8 @@ class NERModel(BaseModel):
         self.word_lengths = tf.placeholder(tf.int32, shape=[None, None],
                         name="word_lengths")
 
-        # shape = (batch size, max length of sentence in batch)
-        self.labels = tf.placeholder(tf.int32, shape=[None, None],
+        # shape = (batch size)
+        self.labels = tf.placeholder(tf.int32, shape=[None],
                         name="labels")
 
         # hyper parameters
@@ -199,6 +199,7 @@ class NERModel(BaseModel):
                     cell_fw, cell_bw, self.word_embeddings,
                     sequence_length=self.sequence_lengths, dtype=tf.float32)
             output = tf.concat([output_fw, output_bw], axis=-1) # shape = [batch_size, max_sentence_length,2*hidden_size_lstm]
+            output = tf.boolean_mask(output,self.mask)          # shape = [batch_size, 2*hidden_size_lstm]
             output = tf.nn.dropout(output, self.dropout)
 
         with tf.variable_scope("proj"):
@@ -208,11 +209,12 @@ class NERModel(BaseModel):
             b = tf.get_variable("b", shape=[4],
                     dtype=tf.float32, initializer=tf.zeros_initializer())
 
-            nsteps = tf.shape(output)[1]
-            output = tf.reshape(output, [-1, 2*self.config.hidden_size_lstm])
+            # nsteps = tf.shape(output)[1]
+            # output = tf.reshape(output, [-1, 2*self.config.hidden_size_lstm])
             pred = tf.matmul(output, W) + b
-            self.logits = tf.reshape(pred, [-1, nsteps, 4])
-            self.probility = tf.nn.softmax(self.logits, -1)
+            self.logits = pred
+            # self.logits = tf.reshape(pred, [-1, nsteps, 4])
+            # self.probility = tf.nn.softmax(self.logits, -1)
 
 
 
@@ -235,7 +237,7 @@ class NERModel(BaseModel):
         losses = tf.nn.sparse_softmax_cross_entropy_with_logits(
             logits=self.logits, labels=self.labels)
             # mask = tf.sequence_mask(self.sequence_lengths)    #[batch_size, max_sentence_length]，不需要指定最大长度
-        losses = tf.boolean_mask(losses, self.mask) # tf.sequence_mask和tf.boolean_mask 来对于序列的padding进行去除的内容
+        # losses = tf.boolean_mask(losses, self.mask) # tf.sequence_mask和tf.boolean_mask 来对于序列的padding进行去除的内容
 
         self.loss = tf.reduce_mean(losses)
 

@@ -170,7 +170,7 @@ def get_glove_vocab(filename):
     """
     print("Building vocab...")
     vocab = set()
-    with open(filename) as f:
+    with open(filename, encoding='utf-8') as f:
         for line in f:
             word = line.strip().split(' ')[0]
             vocab.add(word)
@@ -236,7 +236,7 @@ def export_trimmed_glove_vectors(vocab, glove_filename, trimmed_filename, dim):
     embeddings = np.zeros([len(vocab), dim])   # 对于glove中无定义的word，embedding为全部为0
     print(len(vocab))
 
-    with open(glove_filename) as f:
+    with open(glove_filename, encoding='utf-8') as f:
         for line in f:
             line = line.strip().split(' ')
             word = line[0]
