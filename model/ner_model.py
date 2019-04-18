@@ -225,25 +225,19 @@ class NERModel(BaseModel):
         in python and not in pure tensroflow, we have to make the prediciton
         outside the graph.
         """
-        if not self.config.use_crf:   #labels_predict=[batch_size,nstep]
-            self.labels_pred = tf.cast(tf.argmax(self.logits, axis=-1),
-                    tf.int32)
+
+        self.labels_pred = tf.cast(tf.argmax(self.logits, axis=-1),
+                tf.int32)
 
 
     def add_loss_op(self):
-        """Defines the loss"""
-        if self.config.use_crf:
-            log_likelihood, trans_params = tf.contrib.crf.crf_log_likelihood(
-                    self.logits, self.labels, self.sequence_lengths)
-            self.trans_params = trans_params # need to evaluate it for decoding
-            self.loss = tf.reduce_mean(-log_likelihood)
-        else:
-            losses = tf.nn.sparse_softmax_cross_entropy_with_logits(
-                    logits=self.logits, labels=self.labels)
-            # mask = tf.sequence_mask(self.sequence_lengths)    #[batch_size, max_sentence_length]，不需要指定最大长度
-            losses = tf.boolean_mask(losses, self.mask) # tf.sequence_mask和tf.boolean_mask 来对于序列的padding进行去除的内容
 
-            self.loss = tf.reduce_mean(losses)
+        losses = tf.nn.sparse_softmax_cross_entropy_with_logits(
+            logits=self.logits, labels=self.labels)
+            # mask = tf.sequence_mask(self.sequence_lengths)    #[batch_size, max_sentence_length]，不需要指定最大长度
+        losses = tf.boolean_mask(losses, self.mask) # tf.sequence_mask和tf.boolean_mask 来对于序列的padding进行去除的内容
+
+        self.loss = tf.reduce_mean(losses)
 
         # for tensorboard
         tf.summary.scalar("loss", self.loss)
