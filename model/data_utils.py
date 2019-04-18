@@ -504,6 +504,7 @@ def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
 
                     if i==ne_end-1:
                         words.append(processing_word(entity))
+                        masks.append(True)
             yield words, tags, masks
             words, tags, masks = [], [], []
 
