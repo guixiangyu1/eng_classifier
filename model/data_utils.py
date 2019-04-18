@@ -542,7 +542,7 @@ def get_chunks_from_tags(tags):
 
     # end condition
     if chunk_type is not None:
-        chunk = (chunk_type, chunk_start, len(seq))
+        chunk = (chunk_type, chunk_start, len(tags))
         chunks.append(chunk)
 
     return chunks
