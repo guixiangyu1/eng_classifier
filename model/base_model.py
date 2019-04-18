@@ -128,7 +128,7 @@ class BaseModel(object):
                 self.sess.graph)
 
 
-    def train(self, train, dev):
+    def train(self, train, dev, test):
         """Performs training with early stopping and lr exponential decay
 
         Args:
