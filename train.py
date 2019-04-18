@@ -28,7 +28,7 @@ def main():
     test4cl = CoNLLdata4classifier(test, processing_word=config.processing_word,
                                  processing_tag=config.processing_tag)
     for i, (words, tags, masks) in enumerate(test4cl):
-        if i<30:
+        if i<2:
             print(words)
             print(tags)
             print(masks)
