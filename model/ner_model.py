@@ -259,7 +259,7 @@ class NERModel(BaseModel):
         self.initialize_session(indicate=indicate) # now self.sess is defined and vars are init
 
 
-    def predict_batch(self, words):
+    def predict_batch(self, words, mask):
         """
         Args:
             words: list of sentences
@@ -269,7 +269,7 @@ class NERModel(BaseModel):
             sequence_length
 
         """
-        fd, _ = self.get_feed_dict(words, dropout=1.0)
+        fd, _ = self.get_feed_dict(words, mask=mask, dropout=1.0)
 
         # if self.config.use_crf:
         #     # get tag scores and transition params of CRF
