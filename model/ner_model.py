@@ -370,27 +370,27 @@ class NERModel(BaseModel):
         return {"acc": 100*acc, "f1": acc*100}
 
 
-    def run_classify(self, test):
-        prob = []
-        pred = []
-        for words, _, masks in minibatches(test, self.config.batch_size):
-            labels_pred, sequence_lengths, pred_prob = self.predict_batch(words)
-
-            for lab_pred, length, mask, sentence_prob in zip(labels_pred, sequence_lengths, masks, pred_prob):
-
-                lab_pred = lab_pred[:length]
-                sentence_prob = sentence_prob[:length]
-
-                for (b, c, d) in zip(lab_pred, mask, sentence_prob):
-                    if c:
-                        pred.append(self.idx_to_tag[b])
-                        prob.append(d)
-        with open("results/class_pred_with_pro.txt", "w") as f:
-            for pred_class, probility in zip(pred,prob):
-                f.write("{} ".format(pred_class))
-                for num in probility:
-                    f.write("%.4f " % num)
-                f.write('\n')
+    # def run_classify(self, test):
+    #     prob = []
+    #     pred = []
+    #     for words, _, masks in minibatches(test, self.config.batch_size):
+    #         labels_pred, sequence_lengths, pred_prob = self.predict_batch(words)
+    #
+    #         for lab_pred, length, mask, sentence_prob in zip(labels_pred, sequence_lengths, masks, pred_prob):
+    #
+    #             lab_pred = lab_pred[:length]
+    #             sentence_prob = sentence_prob[:length]
+    #
+    #             for (b, c, d) in zip(lab_pred, mask, sentence_prob):
+    #                 if c:
+    #                     pred.append(self.idx_to_tag[b])
+    #                     prob.append(d)
+    #     with open("results/class_pred_with_pro.txt", "w") as f:
+    #         for pred_class, probility in zip(pred,prob):
+    #             f.write("{} ".format(pred_class))
+    #             for num in probility:
+    #                 f.write("%.4f " % num)
+    #             f.write('\n')
 
 
 

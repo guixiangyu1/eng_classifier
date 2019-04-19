@@ -144,7 +144,10 @@ class BaseModel(object):
             self.logger.info("Epoch {:} out of {:}".format(epoch + 1,
                         self.config.nepochs))
 
-            score = self.run_epoch(train, dev, epoch)     #f1的值
+            score = self.run_epoch(train, test, epoch)     #f1的值
+
+            self.evaluate(dev)
+
             self.config.lr *= self.config.lr_decay # decay learning rate
 
             # early stopping and saving best parameters
@@ -168,20 +171,20 @@ class BaseModel(object):
             test: instance of class Dataset
 
         """
-        self.logger.info("Testing model over valid set")
+        self.logger.info("Testing model over test set")
         metrics = self.run_evaluate(test)   #在子类ner_model中已经实现了该方法
         msg = " - ".join(["{} {:04.2f}".format(k, v)
                 for k, v in metrics.items()])
         self.logger.info(msg)
         print("Done")
 
-    def classify(self, test):
-        """
-
-        :param test: 生成预测后的分类文本
-        :return:
-        """
-        self.logger.info("Testing model over test set， generate classified file")
-        metrics = self.run_classify(test)  # 在子类ner_model中已经实现了该方法
-
-        print("Done")
+    # def classify(self, test):
+    #     """
+    #
+    #     :param test: 生成预测后的分类文本
+    #     :return:
+    #     """
+    #     self.logger.info("Testing model over test set， generate classified file")
+    #     metrics = self.run_classify(test)  # 在子类ner_model中已经实现了该方法
+    #
+    #     print("Done")
