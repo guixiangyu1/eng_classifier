@@ -171,7 +171,7 @@ class BaseModel(object):
             test: instance of class Dataset
 
         """
-        self.logger.info("Testing model over test set")
+        self.logger.info("Testing model over test/dev set")
         metrics = self.run_evaluate(test)   #在子类ner_model中已经实现了该方法
         msg = " - ".join(["{} {:04.2f}".format(k, v)
                 for k, v in metrics.items()])
