@@ -1,4 +1,6 @@
 import os
+from random import shuffle
+
 import tensorflow as tf
 
 
@@ -144,6 +146,7 @@ class BaseModel(object):
             self.logger.info("Epoch {:} out of {:}".format(epoch + 1,
                         self.config.nepochs))
 
+            shuffle(train)
             score = self.run_epoch(train, test, epoch)     #f1的值
 
             self.evaluate(dev)
