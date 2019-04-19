@@ -96,7 +96,7 @@ class NERModel(BaseModel):
             feed[self.word_lengths] = word_lengths
 
         if labels is not None:
-            labels, _ = pad_sequences(labels, 0)
+            # labels, _ = pad_sequences(labels, 0)
             feed[self.labels] = labels
 
         if mask is not None:

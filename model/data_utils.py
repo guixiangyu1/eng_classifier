@@ -485,12 +485,12 @@ def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
     :param datasets:
     :return:
     '''
-    words, tags, masks = [], [], []
+    words, tags, masks = [], None, []
     data = []
     for raw_words, raw_tags in dataset:
         chunks = get_chunks_from_tags(raw_tags)
         for ne_type, ne_start, ne_end in chunks:
-            tags.append(processing_tag(ne_type))
+            tags = processing_tag(ne_type)
 
             for i, word in enumerate(raw_words):
 
@@ -507,7 +507,7 @@ def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
                         words.append(processing_word(entity))
                         masks.append(True)
             data.append((words, tags, masks))
-            words, tags, masks = [], [], []
+            words, tags, masks = [], None, []
     return data
 
 
