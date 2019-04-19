@@ -269,7 +269,7 @@ class NERModel(BaseModel):
             sequence_length
 
         """
-        fd, sequence_lengths = self.get_feed_dict(words, dropout=1.0)
+        fd, _ = self.get_feed_dict(words, dropout=1.0)
 
         # if self.config.use_crf:
         #     # get tag scores and transition params of CRF
@@ -293,9 +293,9 @@ class NERModel(BaseModel):
 
 
         labels_pred = self.sess.run(self.labels_pred, feed_dict=fd)
-        labels_probility = self.sess.run(self.probility, feed_dict=fd) # [batch_size, max_len, 4 ]
 
-        return labels_pred, sequence_lengths, labels_probility
+
+        return labels_pred
 
 
     def run_epoch(self, train, dev, epoch):
@@ -337,7 +337,7 @@ class NERModel(BaseModel):
         return metrics["f1"]
 
 
-    def run_evaluate(self, test, vocab_tags = None):
+    def run_evaluate(self, test):
         """Evaluates performance on test set
 
         Args:
@@ -350,36 +350,22 @@ class NERModel(BaseModel):
         accs = []
         prob = []
         # idx_to_tag = {idx:tag for tag, idx in vocab_tags.items()}
-        correct_preds, total_correct, total_preds = 0., 0., 0.
         for words, labels, masks in minibatches(test, self.config.batch_size):
-            labels_pred, sequence_lengths, pred_prob = self.predict_batch(words)
+            labels_pred = self.predict_batch(words)
 
-            for lab, lab_pred, length, mask, sentence_prob in zip(labels,labels_pred, sequence_lengths, masks, pred_prob):
-                lab = lab[:length]
-                lab_pred = lab_pred[:length]
-                sentence_prob = sentence_prob[:length]
+            for lab, lab_pred in zip(labels,labels_pred):
+                accs += [lab==lab_pred]
 
-                for (a, b, c, d) in zip(lab, lab_pred, mask, sentence_prob):
-                   if c:
-                        accs += [a==b]
-                        prob.append(d)
-
-
-        print(len(accs))
-        acc = np.mean(accs)
-        # accs = list(accs)
+        # print(len(accs))
         with open("results/correct_class.txt", "w") as f:
-            for indicate, probility in zip(accs,prob):
+            for indicate in accs:
                 if indicate:
-                    f.write("1 ")
+                    f.write("1\n ")
                 else:
-                    f.write("0 ")
-                for num in probility:
-                    f.write("%.4f " % num)
-                f.write('\n')
+                    f.write("0\n ")
         acc = np.mean(accs)
         print("correct_preds: ", acc*len(accs))
-        print("correct_total: ", len(accs))
+        print("total: ", len(accs))
 
         return {"acc": 100*acc, "f1": acc*100}
 
