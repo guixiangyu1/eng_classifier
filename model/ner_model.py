@@ -351,7 +351,7 @@ class NERModel(BaseModel):
         prob = []
         # idx_to_tag = {idx:tag for tag, idx in vocab_tags.items()}
         for words, labels, masks in minibatches(test, self.config.batch_size):
-            labels_pred = self.predict_batch(words)
+            labels_pred = self.predict_batch(words, masks)
 
             for lab, lab_pred in zip(labels,labels_pred):
                 accs += [lab==lab_pred]
