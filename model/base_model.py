@@ -81,7 +81,7 @@ class BaseModel(object):
 
                 self.train_op = optimizer.apply_gradients(grads)
 
-    def initialize_session(self, indicate=None):
+    def initialize_session(self):
         """Defines self.sess and initialize the variables"""
         self.logger.info("Initializing tf session")
         self.sess = tf.Session()
