@@ -357,12 +357,12 @@ class NERModel(BaseModel):
                 accs += [lab==lab_pred]
 
         # print(len(accs))
-        with open("results/correct_class.txt", "w") as f:
+        with open("results/classifier.txt", "w") as f:
             for indicate in accs:
                 if indicate:
-                    f.write("1\n ")
+                    f.write("1\n")
                 else:
-                    f.write("0\n ")
+                    f.write("0\n")
         acc = np.mean(accs)
         print("correct_preds: ", acc*len(accs))
         print("total: ", len(accs))
