@@ -16,7 +16,7 @@ def main():
     # model.reinitialize_weights("proj")
 
     # create datasets [(char_ids), word_id]
-    processing_word = get_processing_word(lowercase=True)
+    processing_word = get_processing_word(lowercase=False)
     dev   = CoNLLDataset(config.filename_dev, processing_word)
     train = CoNLLDataset(config.filename_train, processing_word)
     test = CoNLLDataset(config.filename_test, processing_word)

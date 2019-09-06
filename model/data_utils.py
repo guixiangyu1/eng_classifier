@@ -499,9 +499,9 @@ def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
                     masks.append(False)
                 else:
                     if i==ne_start:
-                        entity = raw_words[i]
+                        entity = raw_words[i].lower()
                     else:
-                        entity = entity + '$@&' + raw_words[i]
+                        entity = entity + '$@&' + raw_words[i].lower()
 
                     if i==ne_end-1:
                         words.append(processing_word(entity))
