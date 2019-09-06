@@ -47,7 +47,14 @@ def main():
     print("len of vocab without entity: ", len(vocab))
 
     vocab_entity = entity2vocab(datasets=[train, dev, test])
-    vocab.update(vocab_entity)
+    for entity in vocab_entity:
+        for word in entity.split('$@&'):
+            if word in vocab:
+                vocab.add(entity)
+            else:
+                pass
+
+    # vocab.update(vocab_entity)
     # vocab = entity2vocab(datasets=[train, dev], vocab=vocab)
 
     # Save vocab
